@@ -19,16 +19,16 @@ class PaperFolding:
         self.paper_thickness_cm = paper_thickness_cm
         self.rounding_decimal = rounding_decimal
         # Validate if the paper thickness is a positive integer or float
-        if ((not isinstance(paper_thickness_cm, int) and not isinstance(paper_thickness_cm, float))
-                or paper_thickness_cm < 0):
+        if paper_thickness_cm < 0:
             raise TypeError(
-                "Paper thickness should be represented in centimeters and can only be either positive integer or float")
-        # Validate if the decimal points to round off is a positive integer
+                "Paper thickness should be represented in centimeters and can only be either non-negative integer or float"
+            )
+        # Validate if the decimal points to round off is a non-negative integer
         if not isinstance(rounding_decimal, int) or rounding_decimal < 0:
-            raise TypeError("Decimal points to round off the float response should only be a positive integer")
+            raise TypeError("Decimal points to round off the float can only be a non-negative integer")
 
     def calculate_paper_height(self, fold_count: int, conversion_unit: str = "cm") -> dict:
-        # Validate if the fold count is a positive integer
+        # Validate if the fold count is a non-negative integer
         if not isinstance(fold_count, int) or fold_count < 0:
             raise TypeError("Fold count should only be a positive integer")
         # Validate if the conversion unit is available in the conversion_constant dictionary
@@ -42,11 +42,11 @@ class PaperFolding:
                            .__round__(self.rounding_decimal)),
                 "unit": conversion_unit
             }
-        except Exception as errors:
-            raise Exception(errors)
+        except Exception as e:
+            print("An unexpected error occurred: {}".format(e))
 
     def calculate_folds_required(self, desired_height: int | float, measurement_unit: str = "cm") -> dict:
-        # Validate if the desired height is a positive integer or float
+        # Validate if the desired height is a non-negative integer or float
         if (not isinstance(desired_height, int) and not isinstance(desired_height, float)) or desired_height < 0:
             raise TypeError("Desired height can only be either positive integer or float")
         # Calculate the number of folds required to reach a given height
@@ -60,27 +60,32 @@ class PaperFolding:
 
 
 if __name__ == "__main__":
-    print("\nThis program let you calculate the number of paper folders required to reach a certain height\n"
-          "Here are the supported formats:", ("{}, " * 6).format(*list(PaperFolding.conversion_constant.keys())),
-          "[Eg: 23m]")
-    raw_input = input("\nEnter the height you would like to compare with paper folding in unit format: ")
+    print("\n\t\t\tWelcome to the Paper Folding Calculator!")
+    print("This program helps you determine the number of paper folds needed to reach a desired height.")
+    print("Here are the supported formats:", ("{}, " * 6).format(*list(PaperFolding.conversion_constant.keys()))
+          ,"[Eg: 23m]")
+    user_input = input("\nEnter the height you would like to compare with paper folding in unit format: ").lower()
     try:
-        if raw_input[-2:] in PaperFolding.conversion_constant.keys():
-            height = int(raw_input[:-2])
-            unit = raw_input[-2:]
-        elif raw_input[-1:] in PaperFolding.conversion_constant.keys():
-            height = int(raw_input[:-1])
-            unit = raw_input[-1]
+        if user_input[-2:] in PaperFolding.conversion_constant.keys():
+            height = int(user_input[:-2])
+            unit = user_input[-2:]
+        elif user_input[-1:] in PaperFolding.conversion_constant.keys():
+            height = int(user_input[:-1])
+            unit = user_input[-1]
         else:
             raise ValueError("Incorrect unit. The support formats are {}"
                              .format(list(PaperFolding.conversion_constant.keys())))
-        if isinstance(height, int) and height > 0:
+        if height > 0:
             # Create an instance of the PaperFolding class and call its methods to perform the desired calculations
             paper_folding = PaperFolding()
             response = paper_folding.calculate_folds_required(height, unit)
-            print("With {} folds you can reach {}{}".format(response["folds"],
-                                                            response["result"]["height"], response["result"]["unit"]))
+            print("To reach a height of {}{}, you'll need to fold the paper {} times and will reach a height of {}{}"
+                  .format(height, unit, response["folds"], response["result"]["height"], response["result"]["unit"]))
         else:
             raise TypeError("Height should be a positive integer")
-    except Exception as unexpected_error:
-        raise Exception(unexpected_error)
+    except ValueError as ve:
+        print("Error: {}".format(ve))
+    except TypeError as te:
+        print("Error: {}".format(te))
+    except Exception as e:
+        print("An unexpected error occurred: {}".format(e))
