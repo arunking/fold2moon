@@ -1,4 +1,4 @@
-fold2moon.py
+# fold2moon.py
 
 class PaperFolding:
     # Default values for paper thickness and decimal rounding
