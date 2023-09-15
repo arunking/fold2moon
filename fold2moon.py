@@ -1,3 +1,5 @@
+# paper_folding.py
+
 class PaperFolding:
     # Default values for paper thickness and decimal rounding
     default_paper_thickness_cm = 0.1
@@ -13,7 +15,7 @@ class PaperFolding:
         "au": 14959787070000
     }
 
-    def __init__(self, paper_thickness_cm: int | float = default_paper_thickness_cm,
+    def __init__(self, paper_thickness_cm: float = default_paper_thickness_cm,
                  rounding_decimal: int = default_rounding_decimal):
         # Initialize the class with default values for paper thickness and rounding decimal
         self.paper_thickness_cm = paper_thickness_cm
@@ -21,7 +23,7 @@ class PaperFolding:
         # Validate if the paper thickness is a positive integer or float
         if paper_thickness_cm < 0:
             raise TypeError(
-                "Paper thickness should be represented in centimeters and can only be either non-negative integer or float"
+                "Paper thickness should be represented in centimeters and can only be a non-negative float"
             )
         # Validate if the decimal points to round off is a non-negative integer
         if not isinstance(rounding_decimal, int) or rounding_decimal < 0:
@@ -30,7 +32,7 @@ class PaperFolding:
     def calculate_paper_height(self, fold_count: int, conversion_unit: str = "cm") -> dict:
         # Validate if the fold count is a non-negative integer
         if not isinstance(fold_count, int) or fold_count < 0:
-            raise TypeError("Fold count should only be a positive integer")
+            raise TypeError("Fold can only be a non-negative integer")
         # Validate if the conversion unit is available in the conversion_constant dictionary
         if conversion_unit not in self.conversion_constant.keys():
             raise ValueError("Incorrect conversion unit. The support formats are {}"
@@ -45,10 +47,10 @@ class PaperFolding:
         except Exception as e:
             print("An unexpected error occurred: {}".format(e))
 
-    def calculate_folds_required(self, desired_height: int | float, measurement_unit: str = "cm") -> dict:
+    def calculate_folds_required(self, desired_height: float, measurement_unit: str = "cm") -> dict:
         # Validate if the desired height is a non-negative integer or float
-        if (not isinstance(desired_height, int) and not isinstance(desired_height, float)) or desired_height < 0:
-            raise TypeError("Desired height can only be either positive integer or float")
+        if desired_height < 0:
+            raise TypeError("Desired height can only be a non-negative float")
         # Calculate the number of folds required to reach a given height
         folds = 0
         while self.calculate_paper_height(folds, measurement_unit)["height"] < desired_height:
