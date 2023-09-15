@@ -1,8 +1,8 @@
-# paper_folding.py
+fold2moon.py
 
 class PaperFolding:
     # Default values for paper thickness and decimal rounding
-    default_paper_thickness_cm = 0.1
+    default_paper_thickness_cm = 0.01
     default_rounding_decimal = 2
 
     # Conversion constants for different units
